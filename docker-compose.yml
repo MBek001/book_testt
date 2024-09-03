@@ -1,0 +1,39 @@
+
+services:
+  data:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: book_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2005
+    ports:
+      - "5433:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - data
+    environment:
+      DB_NAME: book_test
+      DB_USER: postgres
+      DB_PASSWORD: 2005
+      DB_HOST: data
+      DB_PORT: 5432
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf

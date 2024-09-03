@@ -1,0 +1,159 @@
+.cartContainer{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    position: relative;
+}
+.left-cart{
+    width: 70%;
+    height: 100%;
+}
+
+.cart-head{
+    width: 100%;
+    height: 20%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+}
+.cart-head h3{
+    font-weight: 700;
+}
+
+.body-cart{
+    width: 100%;
+    height: 65%;
+    overflow: scroll;
+}
+
+.bottom-cart-cart{
+    width: 100%;
+    height: 10%;
+    padding-left: 40px;
+    padding-top: 20px;
+    font-size: 18px;
+    
+}
+
+.bottom-cart-cart a{
+    text-decoration: none;
+}
+
+.right-cart{
+    width: 30%;
+    height: 100%;
+    padding: 0 20px;
+    background-color: rgba(192, 192, 192, 0.349)
+}
+
+.line{
+    width: 100%;
+    height: 1px ;
+    border: 1px solid rgba(192, 192, 192, 0.596);
+}
+.right-cart-head{
+    width: 100%;
+    height: 25%;
+    padding-top: 30%; 
+}
+
+.right-cart-head h3{
+    font-weight: 800;
+}
+
+.right-cart-body{
+    width: 100%;
+    height: 60%;
+}
+.right-cart-body .d-flex{
+    margin-top: 20px;
+    justify-content: space-between;
+}
+
+.right-cart-body select{
+    width: 100%;
+    height: 60px;
+    margin: 20px 0;
+}
+
+.right-cart-body button{
+    width: 100%;
+    height: 60px;
+    border: none;
+    background-color: black;
+    color: white;
+}
+
+.body-cart table{
+    width: 90% !important;
+    height: auto;
+}
+
+.quantity-inp{
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    margin: 0 10px;
+}
+
+.incr{
+    border: 0;
+    background-color: transparent;
+    font-size: 20px !important;
+}
+.dcr{
+    border: 0;
+    background-color: transparent;
+    font-size: 20px !important;
+}
+
+.book-cover{
+    width: 85px;
+    height: 95px;
+}
+
+
+/* paymant part */
+
+
+.paymentContainer{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.658);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paymentForm{
+    width: 28%;
+    height: 450px;
+    padding: 20px 20px 0;
+    overflow-y: scroll;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 15px rgba(192, 192, 192, 0.575);
+}
+
+.formGroup input{
+    width: 90%;
+    height: 50px;
+    margin-bottom: 20px;
+    padding-left: 10px;
+}
+
+.paymentContainer button{
+    width: 90%;
+    height: 50px;
+    margin-bottom: 30px;
+    
+}
+
+
+.clso{
+    top: 30px;
+    left: 200px;
+    position: absolute;
+    font-size: 20px !important;
+}

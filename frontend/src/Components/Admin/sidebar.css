@@ -1,0 +1,146 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Propmt;
+    font-weight: 600;
+}
+::-webkit-scrollbar{
+    display:none;
+}
+@font-face {
+    font-family: 'Propmt';
+    src: url('../../font/Prompt-Light.ttf');
+}
+.s-i{
+    font-size: 21px;
+    margin-right: 12px;
+}
+.sider{
+    width: 17%;
+    height: 100vh;
+}
+
+.container-fluid{
+    width: 100% !important;
+    height: 100vh !important;
+    padding: 0 !important;
+    display: flex;
+    overflow-y: scroll;
+}
+.header{
+    width: 100%;
+    height: 56px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+
+
+.header input{
+    width: 290px;
+    height: 34px;
+    border-radius: 7px ;
+    font-size: 13px;
+    padding: 0 1.6rem;
+    border: none;
+    background-color: #F5F5F5;
+    margin: 10px 40px;
+    outline: none;
+}
+
+.header input::placeholder{
+    color: #acabab;
+}
+
+.show-side{
+    width: 100%;
+    height: 95%;
+    overflow-y: scroll;
+    background-color: #F5F5F5;
+}
+.oute{
+    margin-left: -65px;
+    color: #acabab;
+}
+.s-b{
+    font-size: 20px;
+    width: 86%;
+    height: 58px;
+    margin: 6px 14px;
+    border: none;
+    background-color: transparent;
+    text-align: left;
+    color: #9c9c9c;
+    padding-left: .8rem;
+    letter-spacing: 2px;
+}
+
+.s-b:focus-within {
+    background-color: #EDF6FF;
+    border-radius: 10px;
+    color: #48A4FC;
+}
+
+.icn{
+    font-size: 16px;
+    text-decoration: none;
+}
+.user-img{
+    width: 40px;
+    border-radius: 50%;
+}
+.bell{
+    font-size:20px !important;
+}
+.msg{
+    font-size: 20px !important;
+}
+.header input:focus{
+    box-shadow: 1px 1px 5px rgba(175, 108, 224, 0.57);
+    border: skyblue;
+}
+.users{
+    width: 14%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+}
+.name{
+    margin-top: 10px;
+}
+.logo{
+    width: 78%;
+    height: 39px;
+    margin: 30px 0 20px 14px;
+}
+.center{
+    width:83%;
+    height: 100vh;
+    background-color: #F5F5F5;
+    display: inline-block;
+    overflow: hidden;
+}
+.bottomside{
+    display: none;
+}
+
+.logout{
+    height: 40px;
+    width: 10%;
+    background-color: transparent;
+    border-radius:8px ;
+    border: 1px solid tomato;
+    color: tomato;
+    margin-right:20px ;
+    transition: .5s;
+}
+
+.logout:hover{
+    background-color: tomato;
+    color: white;
+}
