@@ -1,10 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit';
-import exampleReducer from './slices/exampleSlice'; // Import your reducer here
+import {configureStore} from '@reduxjs/toolkit'
 
-const store = configureStore({
-  reducer: {
-    example: exampleReducer, // Add your reducer to the store
-  },
-});
 
-export default store;
+
+export default configureStore({reducer:{
+
+
+
+
+
+}})
