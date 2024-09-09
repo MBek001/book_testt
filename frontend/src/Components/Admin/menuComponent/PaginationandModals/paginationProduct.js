@@ -13,7 +13,23 @@ function Pagination() {
   const [showPopup, setShowPopup] = useState(false);
   const [isError, setIsError] = useState(false);
   const [quantityInputs, setQuantityInputs] = useState({}); // Manage quantity input for each book
-  const [image, setImage] = useState('');
+  const [bookIdInput, setBookIdInput] = useState(''); // Manage book ID input for fetching photos
+
+  // Fetch all books from API
+  const fetchBooks = async () => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await axios.get('http://0.0.0.0:8000/book/get-books', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setBooks(response.data);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching books:', err.response || err);
+    }
+  };
 
 
   const handleImage = async (e, bookId) => {
@@ -41,7 +57,7 @@ function Pagination() {
       }
       // Assuming the backend returns the URL of the uploaded image
       const updatedBooks = books.map(book =>
-        book.id === bookId ? { ...book, img: response.data.isImageUrl } : book
+        book.id === bookId ? { ...book, img: response.data.imageUrl } : book
       );
       setBooks(updatedBooks); // Update state with new image URL
     } catch (err) {
@@ -51,67 +67,42 @@ function Pagination() {
 
     fileInput.value = '';
   };
-  
 
+
+  // Handle book deletion
   const handleDelete = async (bookId) => {
-  const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
 
-  try {
-    const response = await axios.delete('http://0.0.0.0:8000/book/delete-book', {
-      params: {
-        book_id: bookId,
-      },
-      headers: {
-        'accept': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    });
-
-    if (response.status === 200) {
-      // Fetch the updated list of books
-      const updatedBooks = books.filter(book => book.id !== bookId);
-      setBooks(updatedBooks);
-
-      // Optionally, reassign IDs or update the state as needed
-      // For example, you could remap IDs or handle gaps here
-
-      setNotification('Book deleted successfully');
-      setIsError(false);
-      setShowPopup(true);
-    }
-  } catch (err) {
-    setNotification('Something went wrong. Please try again.');
-    setIsError(true);
-    setShowPopup(true);
-    setError(err.message);
-    console.error('Error deleting book:', err.response?.data || err);
-  }
-};
-
-  
-
-  const closePopup = () => {
-    setTimeout(() => {
-      setShowPopup(false);
-      setNotification('');
-    }, 3000);
-  };
-
-  const fetchBooks = async () => {
-    const token = localStorage.getItem("accessToken");
     try {
-      const response = await axios.get('http://0.0.0.0:8000/book/get-books', {
+      const response = await axios.delete('http://0.0.0.0:8000/book/delete-book', {
+        params: {
+          book_id: bookId,
+        },
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       });
-      setBooks(response.data);
+
+      if (response.status === 200) {
+        // Fetch the updated list of books
+        const updatedBooks = books.filter(book => book.id !== bookId);
+        setBooks(updatedBooks);
+
+        setNotification('Book deleted successfully');
+        setIsError(false);
+        setShowPopup(true);
+      }
     } catch (err) {
+      setNotification('Something went wrong. Please try again.');
+      setIsError(true);
+      setShowPopup(true);
       setError(err.message);
-      console.error('Error fetching books:', err.response || err);
+      console.error('Error deleting book:', err.response?.data || err);
     }
   };
 
+  // Handle quantity change
   const handleQuantityChange = async (bookId, newQuantity) => {
     const token = localStorage.getItem('accessToken');
     const currentBook = books.find(book => book.id === bookId);
@@ -125,85 +116,125 @@ function Pagination() {
       return;
     }
 
-    if (quantity > currentQuantity) {
-      try {
+    try {
+      if (quantity > currentQuantity) {
         const response = await axios.patch('http://0.0.0.0:8000/book/increment-quantity', null, {
           params: {
             book_id: bookId,
-            increment_by: quantity - currentQuantity
+            increment_by: quantity - currentQuantity,
           },
           headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (response.status === 200) {
           setNotification('Quantity updated successfully');
           setIsError(false);
           setShowPopup(true);
-          // Update local state
-          setBooks(books.map(book =>
-            book.id === bookId ? { ...book, quantity: quantity } : book
-          ));
-          // Clear input field
+          setBooks(books.map(book => (book.id === bookId ? { ...book, quantity } : book)));
           setQuantityInputs(prevState => ({ ...prevState, [bookId]: '' }));
         }
-      } catch (err) {
-        setNotification('Failed to update quantity. Please try again.');
-        setIsError(true);
-        setShowPopup(true);
-        console.error('Error updating quantity:', err.response?.data || err);
-      }
-    } else if (quantity < currentQuantity) {
-      try {
+      } else if (quantity < currentQuantity) {
         const response = await axios.patch('http://0.0.0.0:8000/book/decrement-quantity', null, {
           params: {
             book_id: bookId,
-            decrement_by: currentQuantity - quantity
+            decrement_by: currentQuantity - quantity,
           },
           headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         });
+
 
         if (response.status === 200) {
           setNotification('Quantity updated successfully');
           setIsError(false);
           setShowPopup(true);
-          // Update local state
-          setBooks(books.map(book =>
-            book.id === bookId ? { ...book, quantity: quantity } : book
-          ));
-          // Clear input field
+          setBooks(books.map(book => (book.id === bookId ? { ...book, quantity } : book)));
           setQuantityInputs(prevState => ({ ...prevState, [bookId]: '' }));
         }
-      } catch (err) {
-        setNotification('Failed to update quantity. Please try again.');
-        setIsError(true);
-        setShowPopup(true);
-        console.error('Error updating quantity:', err.response?.data || err);
       }
+    } catch (err) {
+      setNotification('Failed to update quantity. Please try again.');
+      setIsError(true);
+      setShowPopup(true);
+      console.error('Error updating quantity:', err.response?.data || err);
     }
   };
 
-  if(showPopup){
-    closePopup()
-  }
+  // Fetch photos by book ID
+  const fetchPhotosByBookId = async () => {
+    if (!bookIdInput) {
+      alert('Please enter a book ID');
+      return;
+    }
 
+    try {
+      const response = await fetch(`/get-books-photos?book_id=${encodeURIComponent(bookIdInput)}`);
+      if (response.ok) {
+        const data = await response.json();
+
+        // Debugging: Check the structure of the response
+        console.log('Response data:', data);
+
+        // Ensure image_urls is an array
+        if (data && Array.isArray(data.image_urls)) {
+          displayPhotos(data.image_urls);
+        } else {
+          console.error('Unexpected response format:', data);
+          alert('Error: Unexpected response format');
+        }
+      } else {
+        alert('No photos found or error occurred');
+      }
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+      alert('Error fetching photos');
+    }
+  };
+
+  const displayPhotos = (imageUrls) => {
+    const photosContainer = document.getElementById('photosContainer');
+    photosContainer.innerHTML = ''; // Clear previous photos
+
+    // Check if imageUrls is defined and is an array
+    if (imageUrls && Array.isArray(imageUrls)) {
+      imageUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url; // Use the URL returned by the backend
+        img.style.maxWidth = '100%'; // Ensure the image fits well within the container
+        img.style.height = 'auto'; // Maintain aspect ratio
+        photosContainer.appendChild(img);
+      });
+    } else {
+      console.error('Invalid imageUrls:', imageUrls);
+      alert('Error: No photos to display');
+    }
+  };
+
+  // Close popup after a timeout
+  const closePopup = () => {
+    setTimeout(() => {
+      setShowPopup(false);
+      setNotification('');
+    }, 3000);
+  };
+
+  // Call fetchBooks on initial render
   useEffect(() => {
     fetchBooks();
   }, []);
 
   const handleQuantityInputChange = (bookId, value) => {
-    // Validate if value is a number
     if (value === '' || /^\d*$/.test(value)) {
       setQuantityInputs(prevState => ({ ...prevState, [bookId]: value }));
     }
   };
 
-  const filteredBooks = books.filter((book) => {
+  const filteredBooks = books.filter(book => {
     return (
       (languageFilter ? book.language === languageFilter : true) &&
       (categoryFilter ? book.category === categoryFilter : true) &&
@@ -211,6 +242,14 @@ function Pagination() {
       (searchTerm ? book.title.toLowerCase().includes(searchTerm.toLowerCase()) : true)
     );
   });
+
+  if (showPopup) {
+    closePopup();
+  }
+
+
+
+
 
   return (
     <div className='l'>
@@ -250,8 +289,10 @@ function Pagination() {
         </select>
       </div>
 
-      <div className='Tab'>
-        <table className='table table-hover h'>
+
+
+     {filteredBooks.length > 0 ? (
+        <table className="table table-hover">
           <thead>
             <tr>
               <th>Id</th>
@@ -270,7 +311,7 @@ function Pagination() {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody className='tb'>
+          <tbody>
             {filteredBooks.map((book) => (
               <tr key={book.id}>
                 <td>{book.id}</td>
@@ -279,14 +320,14 @@ function Pagination() {
                   <div>
                     {/* Display the existing image */}
                     <img
-                      src={`/static/images/${book.photos}`}
+                      src={`http://0.0.0.0:8000/book/get-books-photos/${book.id}`}
                       alt={book.title}
                       style={{ width: '50px', height: '50px' }}
                     />
                     {/* File input for uploading a new image */}
                     <input
                       type="file"
-                      accept="images/*"
+                      accept="image/*"
                       onChange={(e) => handleImage(e, book.id)}
                       style={{ display: 'block', marginTop: '5px' }}
                     />
@@ -297,12 +338,10 @@ function Pagination() {
                 <td>{book.publication_date}</td>
                 <td>
                   <input
-                    type="number"
-                    className='update-incremant'
+                    type="text"
                     value={quantityInputs[book.id] || book.quantity}
                     onChange={(e) => handleQuantityInputChange(book.id, e.target.value)}
-                    onBlur={() => handleQuantityChange(book.id, quantityInputs[book.id])}
-                    min="0"
+                    onBlur={() => handleQuantityChange(book.id, quantityInputs[book.id] || book.quantity)}
                   />
                 </td>
                 <td>{book.ages}</td>
@@ -312,7 +351,7 @@ function Pagination() {
                 <td>{book.language}</td>
                 <td>{book.barcode}</td>
                 <td>
-                  <button className='btn btn-danger' onClick={() => handleDelete(book.id)}>
+                  <button className="delete-btn" onClick={() => handleDelete(book.id)}>
                     <FaTrash />
                   </button>
                 </td>
@@ -320,7 +359,11 @@ function Pagination() {
             ))}
           </tbody>
         </table>
-      </div>
+      ) : (
+        <p>No books found.</p>
+      )}
+
+      <div id="photosContainer"></div>
       {showPopup && (
         <div className={`popup ${isError ? 'error' : 'success'}`}>
           <p>{notification}</p>

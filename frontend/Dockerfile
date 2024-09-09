@@ -10,6 +10,9 @@ COPY package.json yarn.lock ./
 # Install dependencies
 RUN yarn install
 
+# Add the Babel plugin
+RUN yarn add @babel/plugin-proposal-private-property-in-object --dev
+
 # Copy the rest of the application code
 COPY . .
 

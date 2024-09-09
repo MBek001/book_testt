@@ -89,7 +89,7 @@ const Books = () =>{
     .map((book) => (
       <div className="book-item" key={book.id}>
         <div className="img-top">
-          <img src={ somebook} alt={`Cover of ${book.title}`} />
+          <img src={ "http//:0.0.0.0:8000/book/get-books-photos/"} alt={`Cover of ${book.title}`} />
         </div>
         <div className="bottom-cart">
           <h3>{book.title}</h3>

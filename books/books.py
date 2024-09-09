@@ -239,6 +239,7 @@ async def delete_book(
     return {"message": "Book deleted successfully"}
 
 
+
 @book_router.post('/upload-image')
 async def upload_image(
     book_id: int,
@@ -251,38 +252,31 @@ async def upload_image(
 
     user_id = token.get('user_id')
 
-    # Check if the user is an admin
     result = await session.execute(
         select(user).where(user.c.id == user_id, user.c.is_admin == True)
     )
     if not result.scalar():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required")
 
-    # Check if the book exists
     result = await session.execute(
         select(book).where(book.c.id == book_id)
     )
     if not result.scalar():
         raise HTTPException(status_code=404, detail="Book not found")
 
-    # Save the uploaded file
     file_location = os.path.join(UPLOAD_DIR, file.filename)
     async with aiofiles.open(file_location, "wb") as buffer:
         content = await file.read()
         await buffer.write(content)
 
-    # Insert the image information into the database
     query = insert(images).values(
         book_id=book_id,
-        photo_url=f"{file.filename}"
+        photo_url=f"/images/{file.filename}"
     )
     await session.execute(query)
     await session.commit()
 
-    # Return the full URL to the image
-    image_url = f"http://0.0.0.0:8000/book_test/static/uploads/{file.filename}"
-    return {"message": "Image uploaded successfully", "imageUrl": image_url}
-
+    return {"message": "Image uploaded successfully"}
 
 
 
@@ -299,7 +293,6 @@ async def get_books_photos(book_id: int, session: AsyncSession = Depends(get_asy
 
     # Check if all images exist
     valid_images = [path for path in image_paths if os.path.exists(path)]
-    print("valiiiiidd", valid_images)
 
     if not valid_images:
         raise HTTPException(status_code=404, detail="No valid images found")
